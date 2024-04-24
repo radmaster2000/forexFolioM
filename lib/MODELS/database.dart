@@ -145,7 +145,6 @@ class DatabaseHelper {
 
   Future<void> deleteJournalData(int id) async {
     final db = await database;
-
     await db.delete(
       'JournalData',
       where: 'id = ?',
