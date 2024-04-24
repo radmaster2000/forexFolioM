@@ -28,7 +28,7 @@ class JournalData {
     required this.takeProfit,
     required this.images,
     required this.open,
-     required this.hitby,
+    required this.hitby,
     required this.notes
   });
 
@@ -50,18 +50,18 @@ class JournalData {
   }
   factory JournalData.fromMap(Map<String, dynamic> map) {
     return JournalData(
-      id: map['id'],
-      symbol: map['symbol'],
-      date: map['date'],
-      setup: map['setup'],
-      entryLevel: map['entryLevel'],
-      lotSize: map['lotSize'],
-      stoploss: map['stoploss'],
-      takeProfit: map['takeProfit'],
-      images: map['images'],
-      open: map['open'],
-      hitby: map["hitby"],
-      notes: map["notes"]
+        id: map['id'],
+        symbol: map['symbol'],
+        date: map['date'],
+        setup: map['setup'],
+        entryLevel: map['entryLevel'],
+        lotSize: map['lotSize'],
+        stoploss: map['stoploss'],
+        takeProfit: map['takeProfit'],
+        images: map['images'],
+        open: map['open'],
+        hitby: map["hitby"],
+        notes: map["notes"]
 
     );
   }
@@ -85,6 +85,11 @@ class DatabaseHelper {
           "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, date TEXT, setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT)",
         );
         await db.execute(
+            "CREATE TABLE Trade ("
+                "date TEXT"
+                ")"
+        );
+        await db.execute(
           "CREATE TABLE account(id INTEGER PRIMARY KEY, account_name TEXT, balance REAL,date TEXT)",
         );
         await db.execute(
@@ -103,12 +108,28 @@ class DatabaseHelper {
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
   }
+  Future<void> insertWeekTrade(Trade trade) async {
+    final Database db = await database;
+    await db.insert(
+      'Trade',
+      trade.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
   Future<List<JournalData>> getJournalData() async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query('JournalData');
 
     return List.generate(maps.length, (i) {
       return JournalData.fromMap(maps[i]);
+    });
+  }
+  Future<List<Trade>> getWeekTrade() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> maps = await db.query('Trade');
+
+    return List.generate(maps.length, (i) {
+      return Trade.fromMap(maps[i]);
     });
   }
   Future<void> updateJournalData(JournalData journalData) async {
@@ -189,7 +210,7 @@ class DatabaseHelper {
 }
 
 class AccountHistory{
- // final int id;
+  // final int id;
   final double amount;
   final String name;
   final String date;
@@ -238,9 +259,26 @@ class AccountData {
 
   factory AccountData.fromMap(Map<String, dynamic> map) {
     return AccountData(
-      id: map['id'],
-      currency: map['account_name'],
-      balance: map['balance'],
+        id: map['id'],
+        currency: map['account_name'],
+        balance: map['balance'],
+        date:map['date']
+    );
+  }
+}
+class Trade {
+
+  final DateTime date;
+
+  Trade({required this.date});
+  Map<String, dynamic> toMap() {
+    return {
+      'date':date
+    };
+  }
+
+  factory Trade.fromMap(Map<String, dynamic> map) {
+    return Trade(
         date:map['date']
     );
   }
