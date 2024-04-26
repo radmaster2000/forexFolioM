@@ -63,7 +63,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
         }
 
         // Print year-end values
-        for (int year = 0; year < years * 12; year++) {
+        for (int year = 0; year < years; year++) {
           print("Year ${year + 1}: \$%.2f${yearEndValue[year]}");
           future.add(yearEndValue[year]);
         }

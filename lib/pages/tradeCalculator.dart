@@ -309,38 +309,45 @@ newcurrency=currencies[0];
                             ],
                           ),
                         ),
-                        // Padding(
-                        //   padding: const EdgeInsets.all(8.0),
-                        //   child: Row(
-                        //     children: [
-                        //       Expanded(
-                        //         child: TextField(
-                        //           decoration: InputDecoration(
-                        //             hintStyle: TextStyle(fontWeight: FontWeight.normal),
-                        //             // border: OutlineInputBorder(),
-                        //             hintText: 'Account Balance',
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       Spacer(),
-                        //       Expanded(
-                        //         child: DropdownButton<String>(
-                        //
-                        //           items: ['Option 1', 'Option 2', 'Option 3']
-                        //               .map((String value) {
-                        //             return DropdownMenuItem<String>(
-                        //               value: value,
-                        //               child: Text(value),
-                        //             );
-                        //           }).toList(),
-                        //           onChanged: (String ?newValue) {
-                        //             // Handle dropdown value change
-                        //           },
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                flex: 2,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                      hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                                      // border: OutlineInputBorder(),
+                                      hintText: 'Account Balance',
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Spacer(),
+                              Expanded(
+                                  flex: 1,
+                                  child: Container())
+                              // Expanded(
+                              //   child: DropdownButton<String>(
+                              //
+                              //     items: ['Option 1', 'Option 2', 'Option 3']
+                              //         .map((String value) {
+                              //       return DropdownMenuItem<String>(
+                              //         value: value,
+                              //         child: Text(value),
+                              //       );
+                              //     }).toList(),
+                              //     onChanged: (String ?newValue) {
+                              //       // Handle dropdown value change
+                              //     },
+                              //   ),
+                              // ),
+                            ],
+                          ),
+                        ),
                         // Widgets for account balance, risk, and reward inputs
                         // ...
                         SizedBox(
