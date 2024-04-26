@@ -372,7 +372,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                           monthlyDeposit = double.parse(value),
                     ),
                   ),
-                Padding(
+                if (deposit != "None")Padding(
                   padding: EdgeInsets.only(top: 10),
                   child: Text("Deposits made at what point of Time",
                       style: Theme.of(context).textTheme.titleMedium),

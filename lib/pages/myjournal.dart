@@ -555,7 +555,8 @@ Widget entryCard(){
                             images: null,
                             open: "Open",
                           notes: "",
-                          hitby: ""
+                          hitby: "",
+                            longShort: longShort
                         );
                         debugPrint("dateformat is ${DateFormat('dd-MM-yyyy').format(_selectedDate)}");
                         DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(_selectedDate));

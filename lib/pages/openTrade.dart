@@ -303,7 +303,7 @@ class _OpenTradeState extends State<OpenTrade> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
+                        (data[index].open=="Close") ?Container(
                           child: Column(
 
                             children: [
@@ -311,9 +311,17 @@ class _OpenTradeState extends State<OpenTrade> {
                               Text('26%')
                             ],
                           ),
+                        ):Container(
+                          child: Column(
+
+                            children: [
+                              Text('Status'),
+                              Text('Active')
+                            ],
+                          ),
                         ),
                         Divider(thickness: 2,),
-                        Container(
+                        (data[index].open=="Close")?Container(
                           // decoration: BoxDecoration(
                           //     borderRadius: BorderRadius.circular(20),
                           //     border: Border.all(color: Colors.grey)
@@ -322,6 +330,17 @@ class _OpenTradeState extends State<OpenTrade> {
                             children: [
                               Text('Duration'),
                               Text('2:00 hrs%')
+                            ],
+                          ),
+                        ):Container(
+                          // decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(20),
+                          //     border: Border.all(color: Colors.grey)
+                          // ),
+                          child: Row(
+                            children: [
+                             Icon(Icons.arrow_circle_down),
+                              Text(data[index].longShort)
                             ],
                           ),
                         )
@@ -682,7 +701,8 @@ class _OpenTradeState extends State<OpenTrade> {
                           images: null,
                           open: "Close",
                         hitby: stopLoss,
-                        notes: notes.text
+                        notes: notes.text,
+                          longShort:""
                       );
                       database.updateJournalData(newEntry);
                       setState((){

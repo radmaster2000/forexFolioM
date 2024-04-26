@@ -17,6 +17,7 @@ class JournalData {
   String open;
   String hitby;
   String notes;
+  String longShort;
 
   JournalData({
     required this.id,
@@ -30,7 +31,8 @@ class JournalData {
     required this.images,
     required this.open,
     required this.hitby,
-    required this.notes
+    required this.notes,
+    required this.longShort
   });
 
   Map<String, dynamic> toMap() {
@@ -46,7 +48,8 @@ class JournalData {
       'images':images,
       'open':open,
       'hitby':hitby,
-      'notes':notes
+      'notes':notes,
+      "longShort":longShort
     };
   }
   factory JournalData.fromMap(Map<String, dynamic> map) {
@@ -62,7 +65,8 @@ class JournalData {
         images: map['images'],
         open: map['open'],
         hitby: map["hitby"],
-        notes: map["notes"]
+        notes: map["notes"],
+        longShort: map["longShort"]
 
     );
   }
@@ -83,7 +87,7 @@ class DatabaseHelper {
       join(await getDatabasesPath(), 'journal_database.db'),
       onCreate: (db, version) async{
         await db.execute(
-          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, date TEXT, setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT)",
+          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, date TEXT, setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT)",
         );
         await db.execute(
             "CREATE TABLE Trade (startDate TEXT, endDate TEXT)"
