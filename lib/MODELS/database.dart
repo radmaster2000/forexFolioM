@@ -86,9 +86,7 @@ class DatabaseHelper {
           "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, date TEXT, setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT)",
         );
         await db.execute(
-            "CREATE TABLE Trade ("
-                "date TEXT"
-                ")"
+            "CREATE TABLE Trade (startDate TEXT, endDate TEXT)"
         );
         await db.execute(
           "CREATE TABLE account(id INTEGER PRIMARY KEY, account_name TEXT, balance REAL,date TEXT)",
@@ -111,11 +109,33 @@ class DatabaseHelper {
   }
   Future<void> insertWeekTrade(Trade trade) async {
     final Database db = await database;
-    await db.insert(
+    List<Map<String, dynamic>> existingTrades = await db.query(
       'Trade',
-      trade.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
+      where: 'startDate = ? OR endDate = ?',
+      whereArgs: [
+        DateFormat('yyyy-MM-dd').format(trade.startDate),
+        DateFormat('yyyy-MM-dd').format(trade.endDate),
+      ],
     );
+    if (existingTrades.isNotEmpty) {
+      // If a trade with the same weekday already exists, update it instead of inserting a new one
+      await db.update(
+        'Trade',
+        trade.toMap(),
+        where: 'startDate = ? OR endDate = ?',
+        whereArgs: [
+          DateFormat('yyyy-MM-dd').format(trade.startDate),
+          DateFormat('yyyy-MM-dd').format(trade.endDate),
+        ],
+      );
+    } else {
+      // If no trade with the same weekday exists, insert a new one
+      await db.insert(
+        'Trade',
+        trade.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+    }
   }
   Future<List<JournalData>> getJournalData() async {
     final Database db = await database;
@@ -125,6 +145,14 @@ class DatabaseHelper {
       return JournalData.fromMap(maps[i]);
     });
   }
+  // Future<List<Trade>> getTradeData() async {
+  //   final Database db = await database;
+  //   final List<Map<String, dynamic>> maps = await db.query('Trade');
+  //
+  //   return List.generate(maps.length, (i) {
+  //     return Trade.fromMap(maps[i]);
+  //   });
+  // }
   Future<List<Trade>> getWeekTrade() async {
     final Database db = await database;
     final List<Map<String, dynamic>> maps = await db.query('Trade');
@@ -268,18 +296,21 @@ class AccountData {
 }
 class Trade {
 
-  final DateTime date;
+  final DateTime startDate;
+  final DateTime endDate;
 
-  Trade({required this.date});
+  Trade({required this.startDate,required this.endDate});
   Map<String, dynamic> toMap() {
     return {
-      'date':DateFormat('dd-MM-yyyy').format(date)
+      'startDate':DateFormat('yyyy-MM-dd').format(startDate),
+      'endDate':DateFormat('yyyy-MM-dd').format(endDate)
     };
   }
 
   factory Trade.fromMap(Map<String, dynamic> map) {
     return Trade(
-        date:map['date']
+        startDate:DateTime.parse(map['startDate']),
+      endDate:DateTime.parse(map['endDate']),
     );
   }
 }

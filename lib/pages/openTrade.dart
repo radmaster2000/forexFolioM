@@ -10,8 +10,9 @@ import '../utils/utilities.dart';
 import 'account.dart';
 
 class OpenTrade extends StatefulWidget {
-  String? week;
-   OpenTrade({super.key,this.week});
+  String? startday;
+  String? endDay;
+   OpenTrade({super.key,this.startday,this.endDay});
 
   @override
   State<OpenTrade> createState() => _OpenTradeState();
@@ -20,6 +21,7 @@ class OpenTrade extends StatefulWidget {
 class _OpenTradeState extends State<OpenTrade> {
   DatabaseHelper database=DatabaseHelper();
   List <JournalData>db=[];
+  List <JournalData>filteredList=[];
   List<bool> isShow=[];
   TextEditingController _calender=TextEditingController();
   String stopLoss="TP";
@@ -31,12 +33,36 @@ class _OpenTradeState extends State<OpenTrade> {
   debugPrint("the database data is ${data[0].takeProfit},${data[0].date},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
   if(data!=null){
     db=data;
+    for(int i=0;i<db.length;i++){
+      List<String> parts = db[i].date.split("-"); // Split the date string by '-'
+      String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
+      debugPrint("date is ${db[i].date}");
+      DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(formattedDate)));
+      DateTime monday = date.subtract(Duration(days: date.weekday - 1));
+      DateTime friday = monday.add(Duration(days: 4));
+      ///========================///
+      List<String> dayParts = widget.startday!.split("-");
+      String formattedDay = "${dayParts[2]}-${dayParts[1]}-${dayParts[0]}";
+      DateTime dayDateTime = DateTime.parse(formattedDay);
+      ///==============================///
+      List<String> endParts = widget.endDay!.split("-");
+      String form = "${endParts[2]}-${endParts[1]}-${endParts[0]}";
+      DateTime endDayTime = DateTime.parse(form);
+      debugPrint("In open trade $date and $monday and $friday");
+      if (dayDateTime == monday && endDayTime==friday) {
+       filteredList.add(db[i]);
+      } else {
+        print("The day is not equal to Friday");
+      }
+    }
     setState(() {
 
     });
   }
 
   }
+
+
 
   @override
   void initState() {
@@ -55,7 +81,13 @@ class _OpenTradeState extends State<OpenTrade> {
               Navigator.pop(context);
             }, icon: Icon(Icons.arrow_back_ios_new,color: Colors.white,)),
             backgroundColor:Color.fromARGB(255, 24, 21, 21),
-            title:  Text('${widget.week}',style: TextStyle(color: Colors.white),),
+            title:  Row(
+              children: [
+                Text('${widget.startday}',style: TextStyle(color: Colors.white),),
+                //Text("-"),
+                //Text('${widget.endDay}',style: TextStyle(color: Colors.white),),
+              ],
+            ),
             actions: [IconButton(onPressed: (){
               Navigator.of(context).push(MaterialPageRoute(builder: (context) => AccountScreen(),));
             }, icon: Icon(Icons.account_circle))],
@@ -73,10 +105,10 @@ class _OpenTradeState extends State<OpenTrade> {
             ),
           ),
           child: ListView.builder(
-            itemCount: db.length,
+            itemCount: filteredList.length,
             itemBuilder: (context, index) {
               isShow.add(false);
-              return customCard(isShow,index,db);
+              return customCard(isShow,index,filteredList);
             },),
         )
         // body: Container(

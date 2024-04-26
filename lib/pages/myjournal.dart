@@ -18,6 +18,7 @@ class MyJournal extends StatefulWidget {
 
 class _MyJournalState extends State<MyJournal> {
   List currencies=[];
+  List <Trade>weekDays=[];
   var _selectedDate = DateTime.now();
   final List<String> currency = [
     'EUR/USD', // Euro/US Dollar
@@ -58,8 +59,12 @@ String newcurrency='';
       debugPrint("the database data is $data");
       if(data!=null){
         db=data;
+        var data2=await dbHelper.getWeekTrade();
+        if(data2!=null){
+          weekDays=data2;
+        }
+      //  debugPrint("data2 ${data2[0].startDate}and ${data2[0].endDate}");
         setState(() {
-
         });
       }
     }
@@ -164,13 +169,13 @@ String newcurrency='';
           ),
         ),
         child: GridView.builder(
-          itemCount: db.length,
+          itemCount: weekDays.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2), itemBuilder: (context, index) {
           return Padding(
             padding: const EdgeInsets.all(5.0),
             child: InkWell(
               onTap: (){
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => OpenTrade(week:db[index].date ),));
+                Navigator.of(context).push(MaterialPageRoute(builder: (context) => OpenTrade(startday:DateFormat('dd-MM-yyyy').format(weekDays[index].startDate),endDay: DateFormat('dd-MM-yyyy').format(weekDays[index].endDate), ),));
               },
               child: Container(
                 decoration: BoxDecoration(
@@ -191,24 +196,24 @@ String newcurrency='';
                     children: [
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: Text(db[index].symbol,style: Theme.of(context).textTheme.headlineSmall,),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(db[index].takeProfit,style: Theme.of(context).textTheme.headlineMedium),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(5.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(db[index].date),
-                            Text('-'),
+                            Text(db[index].symbol,style: Theme.of(context).textTheme.headlineSmall,),
                             Icon(Icons.do_not_disturb_on_total_silence,color: Colors.green,size: 10,)
                           ],
                         ),
                       ),
-                      Text('10 Mar 2024'),
+                      // Padding(
+                      //   padding: const EdgeInsets.all(8.0),
+                      //   child: Text(DateFormat('dd-MM-yyyy').format(weekDays[index].startDate),style: Theme.of(context).textTheme.headlineMedium),
+                      // ),
+                      Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(DateFormat('dd-MM-yyyy').format(weekDays[index].startDate)),
+                      ),
+                      Text('-'),
+                      Text(DateFormat('dd-MM-yyyy').format(weekDays[index].endDate)),
                     ],
                   ),
                 ),
@@ -552,9 +557,15 @@ Widget entryCard(){
                           notes: "",
                           hitby: ""
                         );
-                        Trade trade=Trade(date: _selectedDate);
+                        debugPrint("dateformat is ${DateFormat('dd-MM-yyyy').format(_selectedDate)}");
+                        DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(_selectedDate));
+                        DateTime monday = date.subtract(Duration(days: date.weekday - 1));
+                        DateTime friday = monday.add(Duration(days: 4));
+                        debugPrint("dateformat is $date and $mounted and $friday");
+                        Trade trade=Trade(startDate: monday ,
+                            endDate: friday);
                         setState((){});
-                        debugPrint("trade weekday is ${DateFormat('dd-MM-yyyy').format(trade.date)}");
+                      //  debugPrint("trade weekday is ${DateFormat('dd-MM-yyyy').format(trade)}");
                   // Insert the new entry into the database
                         await dbHelper.insertJournalData(newEntry);
                         await dbHelper.insertWeekTrade(trade);
