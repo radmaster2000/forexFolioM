@@ -54,6 +54,7 @@ String newcurrency='';
     debugPrint("account is $acc");
     if(account!=null){
       var data=  await dbHelper.getJournalData();
+
       debugPrint("the database data is $data");
       if(data!=null){
         db=data;
@@ -132,6 +133,11 @@ String newcurrency='';
               }
 
         else{
+                _selectedDate=DateTime.now();
+                SL.clear();
+                lot.clear();
+                profit.clear();
+                entry.clear();
           showDialog(
             context: context,
             builder: (BuildContext context) {
@@ -546,10 +552,12 @@ Widget entryCard(){
                           notes: "",
                           hitby: ""
                         );
+                        Trade trade=Trade(date: _selectedDate);
                         setState((){});
-
+                        debugPrint("trade weekday is ${DateFormat('dd-MM-yyyy').format(trade.date)}");
                   // Insert the new entry into the database
                         await dbHelper.insertJournalData(newEntry);
+                        await dbHelper.insertWeekTrade(trade);
                         List<JournalData> dat=  await dbHelper.getJournalData();
                         await getdatabaseData();
                         Navigator.pop(context);

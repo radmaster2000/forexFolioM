@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
@@ -272,7 +273,7 @@ class Trade {
   Trade({required this.date});
   Map<String, dynamic> toMap() {
     return {
-      'date':date
+      'date':DateFormat('dd-MM-yyyy').format(date)
     };
   }
 
