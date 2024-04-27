@@ -280,7 +280,8 @@ class _OpenTradeState extends State<OpenTrade> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(data[index].symbol,style: Theme.of(context).textTheme.headlineMedium,)
+                        Text(data[index].symbol,style: Theme.of(context).textTheme.headlineMedium,),
+                        Text(data[index].date,style: Theme.of(context).textTheme.bodyLarge,)
                       ],
                     ),
                   ),
@@ -338,9 +339,16 @@ class _OpenTradeState extends State<OpenTrade> {
                           //     border: Border.all(color: Colors.grey)
                           // ),
                           child: Row(
+                           // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                             Icon(Icons.arrow_circle_down),
-                              Text(data[index].longShort)
+                              (data[index].longShort=="Long")?Icon(Icons.arrow_circle_up): Icon(Icons.arrow_circle_down),
+                              (data[index].longShort=="Long")? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Buy"),
+                              ):Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text("Sell"),
+                              )
                             ],
                           ),
                         )
