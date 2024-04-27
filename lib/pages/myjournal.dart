@@ -278,7 +278,7 @@ Widget entryCard(){
                                   longShort="Long";
                                 });
                               },
-                              child: customRadio(context,'BUY',(longShort=="Long")?Colors.green:Colors.blueAccent,(longShort=="Long")?Colors.green:Colors.grey)))
+                              child: customRadio(context,'BUY',(longShort=="Long")?Colors.green:Colors.blueAccent,(longShort=="Long")?Colors.grey:Colors.blue)))
                       // Widgets for SHORT inputs
                       // ...
                     ],
@@ -329,7 +329,7 @@ Widget entryCard(){
                               });
                               debugPrint("LongShort is $longShort");
                             },
-                            child: customRadio(context,'SELL',(longShort=="Short")?Colors.green:Colors.blueAccent,(longShort=="Short")?Colors.green:Colors.grey)),
+                            child: customRadio(context,'SELL',(longShort=="Short")?Colors.green:Colors.blueAccent,(longShort=="Short")?Colors.grey:Colors.blue)),
                       )
                     ],
                   ),
