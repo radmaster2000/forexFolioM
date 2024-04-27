@@ -57,6 +57,7 @@ String? rewardi="";
           title: Text('Select Currency'),
           content: Scrollbar(
             child: ListView.builder(
+              shrinkWrap: true,
               itemCount: currencies.length,
               itemBuilder: (BuildContext context, int index) {
                 return ListTile(

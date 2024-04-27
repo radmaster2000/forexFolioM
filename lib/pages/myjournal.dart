@@ -152,6 +152,7 @@ class _MyJournalState extends State<MyJournal> {
             );
           } else {
             _selectedDate = DateTime.now();
+            _calender.clear();
             SL.clear();
             lot.clear();
             profit.clear();
