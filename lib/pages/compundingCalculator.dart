@@ -348,14 +348,20 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                   ],
                 ),
 
-                if (deposit != "None")
+                if (deposit != "None" && deposit != "Withdrawal")
                   Padding(
                     padding: EdgeInsets.only(top: 10),
                     child: Text('Deposit Amount:(optional)',
                         style: Theme.of(context).textTheme.titleMedium),
                   ),
+                if (deposit == "Withdrawal")
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text('Withdrawal Amount:(optional)',
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ),
                 //  if(deposit!="None")  SizedBox(width: 10.0),
-                if (deposit != "None")
+                if (deposit != "None" && deposit != "Withdrawal")
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextField(
@@ -372,12 +378,31 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                           monthlyDeposit = double.parse(value),
                     ),
                   ),
-                if (deposit != "None")Padding(
-                  padding: EdgeInsets.only(top: 10),
-                  child: Text("Deposits made at what point of Time",
-                      style: Theme.of(context).textTheme.titleMedium),
-                ),
-                if (deposit != "None")
+                if (deposit == "Withdrawal")
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextField(
+                      decoration: InputDecoration(
+                        filled: true,
+                        border: OutlineInputBorder(
+                            borderSide: BorderSide(color: Colors.grey),
+                            borderRadius: BorderRadius.circular(10)),
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 5.0, horizontal: 12.0),
+                      ),
+                      keyboardType: TextInputType.number,
+                      onChanged: (value) =>
+                          //change value according to withdrawal
+                          monthlyDeposit = double.parse(value),
+                    ),
+                  ),
+                if (deposit != "None" && deposit != "Withdrawal")
+                  Padding(
+                    padding: EdgeInsets.only(top: 10),
+                    child: Text("Deposits made at what point of Time",
+                        style: Theme.of(context).textTheme.titleMedium),
+                  ),
+                if (deposit != "None" && deposit != "Withdrawal")
                   Row(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
