@@ -30,13 +30,13 @@ class _OpenTradeState extends State<OpenTrade> {
   getdatabaseData()async{
   var data=  await database.getJournalData();
 
-  debugPrint("the database data is ${data[0].takeProfit},${data[0].date},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
+  debugPrint("the database data is ${data[0].takeProfit},${data[0].date},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes} and ${data[0].date}");
   if(data!=null){
     db=data;
     for(int i=0;i<db.length;i++){
       List<String> parts = db[i].date.split("-"); // Split the date string by '-'
       String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
-      debugPrint("date is ${db[i].date}");
+      debugPrint("date is ${db[i].date} ");
       DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(formattedDate)));
       DateTime monday = date.subtract(Duration(days: date.weekday - 1));
       DateTime friday = monday.add(Duration(days: 4));
@@ -484,6 +484,7 @@ class _OpenTradeState extends State<OpenTrade> {
     TextEditingController PL=TextEditingController();
     TextEditingController fees=TextEditingController();
     TextEditingController notes=TextEditingController();
+    String calenderError="";
     close.text=sl;
     lotSize.text=lot;
     showDialog(context: context, builder: (context) {
@@ -496,12 +497,16 @@ class _OpenTradeState extends State<OpenTrade> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text('Close Trade',style: Theme.of(context).textTheme.titleLarge),
-                    Spacer(),
                     Expanded(
+                        flex: 2,
+                        child: Text('Close Trade',style: Theme.of(context).textTheme.titleLarge)),
+                    //Spacer(),
+                    Expanded(
+                      flex: 3,
                       child: TextField(
                         controller: _calender,
                         decoration: InputDecoration(
+                          errorText: calenderError,
                           hintStyle: TextStyle(fontWeight: FontWeight.normal),
                           // border: OutlineInputBorder(),
                           hintText: 'Select Date',
@@ -697,26 +702,32 @@ class _OpenTradeState extends State<OpenTrade> {
                     }, child: Text('Cancel')),
                     TextButton(onPressed: (){
                       debugPrint("data is close");
-                      JournalData newEntry = JournalData(
-                          id: id,
-                          symbol: curency,
-                          date: date.text,
-                          setup: "",
-                          entryLevel:close.text,
-                          lotSize: lotSize.text,
-                          stoploss: close.text,
-                          takeProfit: close.text,
-                          images: null,
-                          open: "Close",
-                        hitby: stopLoss,
-                        notes: notes.text,
-                          longShort:""
-                      );
-                      database.updateJournalData(newEntry);
-                      setState((){
-                        getdatabaseData();
-                      });
-                      Navigator.pop(context);
+                      if(_calender.text.isEmpty){
+                        calenderError="enter the calender";
+                        setState((){});
+                      }
+                      else{
+                        JournalData newEntry = JournalData(
+                            id: id,
+                            symbol: curency,
+                            date: date.text,
+                            setup: "",
+                            entryLevel:close.text,
+                            lotSize: lotSize.text,
+                            stoploss: close.text,
+                            takeProfit: close.text,
+                            images: null,
+                            open: "Close",
+                            hitby: stopLoss,
+                            notes: notes.text,
+                            longShort:""
+                        );
+                        database.updateJournalData(newEntry);
+                        setState((){
+                          getdatabaseData();
+                        });
+                        Navigator.pop(context);
+                      }
                     }, child: Text('Close'))
                   ],
                 )
