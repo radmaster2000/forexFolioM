@@ -30,13 +30,13 @@ class _OpenTradeState extends State<OpenTrade> {
   getdatabaseData() async {
     var data = await database.getJournalData();
 
-  debugPrint("the database data is ${data[0].takeProfit},${data[0].date},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
+  debugPrint("the database data is ${data[0].takeProfit},${data[0].opendate},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
   if(data!=null){
     db=data;
     for(int i=0;i<db.length;i++){
-      List<String> parts = db[i].date.split("-"); // Split the date string by '-'
+      List<String> parts = db[i].opendate.split("-"); // Split the date string by '-'
       String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
-      debugPrint("date is ${db[i].date}");
+      debugPrint("date is ${db[i].opendate}");
       DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(formattedDate)));
       DateTime monday = date.subtract(Duration(days: date.weekday - 1));
       DateTime friday = monday.add(Duration(days: 4));
@@ -86,12 +86,17 @@ class _OpenTradeState extends State<OpenTrade> {
             backgroundColor: Color.fromARGB(255, 24, 21, 21),
             title: Row(
               children: [
-                Text(
-                  '${widget.startday}',
-                  style: TextStyle(color: Colors.white),
+                Expanded(
+                  child: Text(
+                    '${widget.startday}',
+                    style: TextStyle(color: Colors.white,fontSize: 15),
+                  ),
                 ),
-                //Text("-"),
-                //Text('${widget.endDay}',style: TextStyle(color: Colors.white),),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("-",style: TextStyle(color: Colors.white)),
+                ),
+                Expanded(child: Text('${widget.endDay}',style: TextStyle(color: Colors.white,fontSize: 15),)),
               ],
             ),
             actions: [
@@ -297,7 +302,7 @@ class _OpenTradeState extends State<OpenTrade> {
                               style: Theme.of(context).textTheme.headlineMedium,
                             ),
                             Text(
-                              data[index].date,
+                              data[index].opendate,
                               style: Theme.of(context).textTheme.bodyLarge,
                             )
                           ],
@@ -416,7 +421,7 @@ class _OpenTradeState extends State<OpenTrade> {
                         children: [
                           Text('Close'),
                           if (data[index].open == "Close")
-                            Text(data[index].stoploss)
+                            (stopLoss=="SL")?Text(data[index].stoploss):Text(data[index].takeProfit)
                         ],
                       ),
                     )
@@ -430,7 +435,7 @@ class _OpenTradeState extends State<OpenTrade> {
                   children: [
                     (data[index].open == "Close")
                         ? Column(
-                            children: [Text("P&L"), Text(" ")],
+                            children: [Text("P&L"), Text(data[index].PL)],
                           )
                         : Column(
                             children: [
@@ -500,7 +505,10 @@ class _OpenTradeState extends State<OpenTrade> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  TextButton(onPressed: () {}, child: Text('Edit')),
+                  TextButton(onPressed: () {
+
+                    editTrade();
+                  }, child: Text('Edit')),
                   if (data[index].open != "Close")
                     TextButton(
                         onPressed: () {
@@ -510,7 +518,8 @@ class _OpenTradeState extends State<OpenTrade> {
                               data[index].lotSize,
                               data[index].symbol,
                               data[index].id,
-                              data[index].entryLevel
+                              data[index].entryLevel,
+                              data[index].opendate
                           );
                         },
                         child: Text('Close'))
@@ -523,13 +532,14 @@ class _OpenTradeState extends State<OpenTrade> {
     );
   }
 
-  closeTrade(String sl,String tp,String lot,String curency ,int id,String entry)async{
+  closeTrade(String sl,String tp,String lot,String curency ,int id,String entry,String opendate)async{
     TextEditingController date=TextEditingController();
     TextEditingController close=TextEditingController();
     TextEditingController lotSize=TextEditingController();
     TextEditingController PL=TextEditingController();
     TextEditingController fees=TextEditingController();
     TextEditingController notes=TextEditingController();
+    var _select=DateTime.now();
     close.text=sl;
     lotSize.text=lot;
     await calculatePandL(lot,entry,tp,sl).then((value) => showDialog(context: context, builder: (context) {
@@ -548,7 +558,7 @@ class _OpenTradeState extends State<OpenTrade> {
                     Spacer(),
                     Expanded(
                       child: TextField(
-                        controller: _calender,
+                        controller: date,
                         decoration: InputDecoration(
                           hintStyle: TextStyle(fontWeight: FontWeight.normal),
                           // border: OutlineInputBorder(),
@@ -559,14 +569,14 @@ class _OpenTradeState extends State<OpenTrade> {
                     IconButton(onPressed: ()async{
                       final pickedDate = await showDatePicker(
                         context: context,
-                        initialDate: _selectedDate,
+                        initialDate: _select,
                         firstDate: DateTime(2000, 1), // Optional: Set minimum date
                         lastDate: DateTime.now(), // Optional: Set maximum date
                       );
-                      if (pickedDate != null && pickedDate != _selectedDate) {
+                      if (pickedDate != null && pickedDate != _select) {
                         setState(() {
-                          _selectedDate = pickedDate;
-                          date.text=DateFormat('dd-MM-yyyy').format(_selectedDate).toString();
+                          _select = pickedDate;
+                          date.text=DateFormat('dd-MM-yyyy').format(_select).toString();
                           setState((){});
                         });
                       }
@@ -756,15 +766,17 @@ class _OpenTradeState extends State<OpenTrade> {
                       JournalData newEntry = JournalData(
                           id: id,
                           symbol: curency,
-                          date: date.text,
+                          opendate: opendate,
+                          closedate: date.text,
                           setup: "",
-                          entryLevel:close.text,
+                          entryLevel:entry,
                           lotSize: lotSize.text,
-                          stoploss: close.text,
-                          takeProfit: close.text,
+                          stoploss: sl,
+                          takeProfit: tp,
                           images: null,
                           open: "Close",
-                          hitby: stopLoss,
+                          PL: PL.text,
+                          hitby: close.text,
                           notes: notes.text,
                           longShort:""
                       );
@@ -784,6 +796,370 @@ class _OpenTradeState extends State<OpenTrade> {
     },));
 
   }
+
+  editTrade(){
+    DateTime _select=DateTime.now();
+    TextEditingController opendate=TextEditingController();
+    TextEditingController closedate=TextEditingController();
+    TextEditingController entrylevel=TextEditingController();
+    TextEditingController SL=TextEditingController();
+    TextEditingController TP=TextEditingController();
+    TextEditingController close=TextEditingController();
+    TextEditingController lotSize=TextEditingController();
+    TextEditingController PL=TextEditingController();
+    TextEditingController fees=TextEditingController();
+    TextEditingController notes=TextEditingController();
+    showDialog(context: context, builder: (context) => StatefulBuilder(builder: (context, setState) {
+      return AlertDialog(
+        insetPadding: EdgeInsets.all(10),
+        content: SingleChildScrollView(
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('Edit Trade',style: Theme.of(context).textTheme.titleLarge),
+                  Spacer(),
+
+                  IconButton(onPressed: ()async{
+                    // final pickedDate = await showDatePicker(
+                    //   context: context,
+                    //   initialDate: _select,
+                    //   firstDate: DateTime(2000, 1), // Optional: Set minimum date
+                    //   lastDate: DateTime.now(), // Optional: Set maximum date
+                    // );
+                    // if (pickedDate != null && pickedDate != _select) {
+                    //   setState(() {
+                    //     _select = pickedDate;
+                    //     date.text=DateFormat('dd-MM-yyyy').format(_select).toString();
+                    //     setState((){});
+                    //   });
+                    // }
+                  }, icon:  Icon(Icons.delete)),
+                ],
+              ),
+              SizedBox(
+                height: 50,
+              ),
+              Row(
+                children: [
+                  Text("Open"),
+                  Expanded(
+                    child: TextField(
+                      controller: opendate,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                        // border: OutlineInputBorder(),
+                        hintText: '',
+                      ),
+                    ),
+                  ),
+                  IconButton(onPressed: ()async{
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: _select,
+                      firstDate: DateTime(2000, 1), // Optional: Set minimum date
+                      lastDate: DateTime.now(), // Optional: Set maximum date
+                    );
+                    if (pickedDate != null && pickedDate != _select) {
+                      setState(() {
+                        _select = pickedDate;
+                        //date.text=DateFormat('dd-MM-yyyy').format(_select).toString();
+                        setState((){});
+                      });
+                    }
+                  }, icon:  Icon(Icons.calendar_today)),
+                ],
+              ),
+              TextField(
+               // controller: date,
+                decoration: InputDecoration(
+                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                  // border: OutlineInputBorder(),
+                  hintText: 'Select Date',
+                ),
+              ),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       InkWell(
+              //         onTap: (){
+              //           stopLoss="TP";
+              //           close.text=tp;
+              //           PL.text=value;
+              //           setState((){});
+              //         },
+              //         child: Container(
+              //           //height: 50.0,
+              //           //width: MediaQuery.of(context).size.width/3,
+              //           child: new Center(
+              //             child: new Text('TP',
+              //                 style: new TextStyle(
+              //                     color:
+              //                     (stopLoss=="TP")?Colors.white:Colors.black,
+              //                     //fontWeight: FontWeight.bold,
+              //                     fontSize: 18.0)),
+              //           ),
+              //           decoration: new BoxDecoration(
+              //             color:(stopLoss=="TP")?Colors.blue:Colors.transparent,
+              //             border: new Border.all(
+              //                 width: 1.0,
+              //                 color:true
+              //                     ? Colors.blueAccent
+              //                     : Colors.grey),
+              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
+              //           ),
+              //         ),
+              //       ),
+              //       InkWell(
+              //         onTap: (){
+              //           stopLoss="SL";
+              //           close.text=sl;
+              //           PL.text="-$value";
+              //           setState((){});
+              //         },
+              //         child: Container(
+              //           //height: 50.0,
+              //           // width: MediaQuery.of(context).size.width/3,
+              //           child: new Center(
+              //             child: new Text('SL',
+              //                 style: new TextStyle(
+              //                     color:
+              //                     (stopLoss=="SL")?Colors.white:Colors.black,
+              //                     //fontWeight: FontWeight.bold,
+              //                     fontSize: 18.0)),
+              //           ),
+              //           decoration: new BoxDecoration(
+              //             color:(stopLoss=="SL")?Colors.blue:Colors.transparent,
+              //             border: new Border.all(
+              //                 width: 1.0,
+              //                 color:true
+              //                     ? Colors.blueAccent
+              //                     : Colors.grey),
+              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
+              //           ),
+              //         ),
+              //       ),
+              //
+              //       InkWell(
+              //         onTap: (){
+              //           stopLoss="manual";
+              //           close.text="";
+              //           PL.text="";
+              //           setState((){});
+              //         },
+              //         child: Container(
+              //           //height: 50.0,
+              //           // width: MediaQuery.of(context).size.width/3,
+              //           child: new Center(
+              //             child: new Text('manual',
+              //                 style: new TextStyle(
+              //                     color:
+              //                     (stopLoss=="manual")?Colors.white:Colors.black,
+              //                     //fontWeight: FontWeight.bold,
+              //                     fontSize: 18.0)),
+              //           ),
+              //           decoration: new BoxDecoration(
+              //             color:(stopLoss=="manual")?Colors.blue:Colors.transparent,
+              //             border: new Border.all(
+              //                 width: 1.0,
+              //                 color:true
+              //                     ? Colors.blueAccent
+              //                     : Colors.grey),
+              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Close Price"),
+                          TextField(
+                            controller: close,
+                            onChanged: (String? value)async{
+                            //  PL.text=await calculatePandL(lot, entry, value!, value!);
+                              setState((){});
+                            },
+
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Lot Size"),
+                          TextField(
+                            controller: lotSize,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Close Price"),
+                          TextField(
+                            controller: close,
+                            onChanged: (String? value)async{
+                             // PL.text=await calculatePandL(lot, entry, value!, value!);
+                              setState((){});
+                            },
+
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Lot Size"),
+                          TextField(
+                            controller: lotSize,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Close Price"),
+                          TextField(
+                            controller: close,
+                            onChanged: (String? value)async{
+                             // PL.text=await calculatePandL(lot, entry, value!, value!);
+                              setState((){});
+                            },
+
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Lot Size"),
+                          TextField(
+                            controller: lotSize,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Net P&L"),
+                          TextField(
+                            controller: PL,
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Fees"),
+                          TextField(
+                            controller: fees,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              // SizedBox(
+              //   height: 30,
+              // ),
+              Text("Notes"),
+              TextField(
+                controller: notes,
+              ),
+              // SizedBox(
+              //   height: 50,
+              // ),
+              // Row(
+              //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //   children: [
+              //     TextButton(onPressed: (){
+              //       Navigator.pop(context);
+              //     }, child: Text('Cancel')),
+              //     TextButton(onPressed: (){
+              //       debugPrint("data is close");
+              //       JournalData newEntry = JournalData(
+              //           id: id,
+              //           symbol: curency,
+              //           opendate: opendate,
+              //           closedate: date.text,
+              //           setup: "",
+              //           entryLevel:entry,
+              //           lotSize: lotSize.text,
+              //           stoploss: sl,
+              //           takeProfit: tp,
+              //           images: null,
+              //           open: "Close",
+              //           PL: PL.text,
+              //           hitby: close.text,
+              //           notes: notes.text,
+              //           longShort:""
+              //       );
+              //       database.updateJournalData(newEntry);
+              //       setState((){
+              //         getdatabaseData();
+              //       });
+              //       Navigator.pop(context);
+              //     }, child: Text('Close'))
+              //   ],
+              // )
+            ],
+          ),
+        ),
+      );
+    },),);
+  }
+
+
+
+
+
 
   Future <String> calculatePandL(String lot,String entry,String profit,String SL)async{
     var ratio;

@@ -268,7 +268,13 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                                     vertical: 5.0, horizontal: 12.0),
                               ),
                               keyboardType: TextInputType.number,
-                              onChanged: (value) => month = int.parse(value),
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  month = int.parse(value);
+                                } else {
+                                  month = 0; // or any default value you want
+                                }
+                              },
                             ),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,

@@ -633,9 +633,11 @@ class _MyJournalState extends State<MyJournal> {
                           JournalData newEntry = JournalData(
                               id: db.length + 1,
                               symbol: newcurrency,
-                              date: _calender.text,
+                              opendate: _calender.text,
+                              closedate: "",
                               setup: "",
                               entryLevel: entry.text,
+                              PL: "",
                               lotSize: lot.text,
                               stoploss: SL.text,
                               takeProfit: profit.text,
@@ -664,7 +666,7 @@ class _MyJournalState extends State<MyJournal> {
                               await dbHelper.getJournalData();
                           await getdatabaseData();
                           Navigator.pop(context);
-                          debugPrint("getdata is ${dat[0].date}");
+                          debugPrint("getdata is ${dat[0].opendate}");
                         }
                       },
                       child: Text(

@@ -7,7 +7,8 @@ import 'package:path/path.dart';
 class JournalData {
   int id;
   String symbol;
-  String date;
+  String opendate;
+  String closedate;
   String setup;
   String entryLevel;
   String lotSize;
@@ -17,12 +18,14 @@ class JournalData {
   String open;
   String hitby;
   String notes;
+  String PL;
   String longShort;
 
   JournalData({
     required this.id,
     required this.symbol,
-    required this.date,
+    required this.opendate,
+    required this.closedate,
     required this.setup,
     required this.entryLevel,
     required this.lotSize,
@@ -32,14 +35,16 @@ class JournalData {
     required this.open,
     required this.hitby,
     required this.notes,
-    required this.longShort
+    required this.longShort,
+  required this.PL
   });
 
   Map<String, dynamic> toMap() {
     return {
       'id':id,
       'symbol': symbol,
-      'date': date,
+      'opendate': opendate,
+      'closedate':closedate,
       'setup': setup,
       'entryLevel': entryLevel,
       'lotSize': lotSize,
@@ -47,6 +52,7 @@ class JournalData {
       'takeProfit': takeProfit,
       'images':images,
       'open':open,
+      'PL':PL,
       'hitby':hitby,
       'notes':notes,
       "longShort":longShort
@@ -56,9 +62,11 @@ class JournalData {
     return JournalData(
         id: map['id'],
         symbol: map['symbol'],
-        date: map['date'],
+        opendate: map['opendate'],
+        closedate:  map['closedate'],
         setup: map['setup'],
         entryLevel: map['entryLevel'],
+        PL: map["PL"],
         lotSize: map['lotSize'],
         stoploss: map['stoploss'],
         takeProfit: map['takeProfit'],
@@ -87,7 +95,7 @@ class DatabaseHelper {
       join(await getDatabasesPath(), 'journal_database.db'),
       onCreate: (db, version) async{
         await db.execute(
-          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, date TEXT, setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT)",
+          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, opendate TEXT, closedate TEXT,setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT,PL TEXT)",
         );
         await db.execute(
             "CREATE TABLE Trade (startDate TEXT, endDate TEXT)"
