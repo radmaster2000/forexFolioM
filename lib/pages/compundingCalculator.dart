@@ -32,6 +32,17 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
         future.add((principal * pow(1 + r / 12, i * 12)));
         //  futureValue += deposit * pow(1 + rate / 100, i);
       }
+      int remainingMonths = 0;
+      if (monthchoosen != '') {
+        remainingMonths = monthchoosen % 12;
+      }
+      if (remainingMonths > 0) {
+        double futureValueRemaining = principal *
+            pow(1 + r / 12, years * 12) *
+            pow(1 + r / 12, remainingMonths);
+        debugPrint('running $futureValueRemaining and $rate and ');
+        future.add(futureValueRemaining);
+      }
     } else if (deposit == "Deposit") {
       if (end == "End") {
         ///-----------------end----------
