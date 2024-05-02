@@ -169,7 +169,7 @@ newcurrency=currencies[0];
                                       longShort="Long";
                                     });
                                   },
-                                  child: customRadio(context,'Long',(longShort=="Long")?Colors.green:Colors.blueAccent))
+                                  child: customRadio(context,'Buy',(longShort=="Long")?Colors.green:Colors.blueAccent))
                               // Widgets for SHORT inputs
                               // ...
                             ],
@@ -218,7 +218,7 @@ newcurrency=currencies[0];
                                     });
                                     debugPrint("LongShort is $longShort");
                                   },
-                                  child: customRadio(context,'Short',(longShort=="Short")?Colors.green:Colors.blueAccent))
+                                  child: customRadio(context,'Sell',(longShort=="Short")?Colors.green:Colors.blueAccent))
                             ],
                           ),
                         ),

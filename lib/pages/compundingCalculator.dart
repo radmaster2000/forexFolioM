@@ -21,25 +21,25 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
   List interest = [];
   List accruedInterest = [];
   calculateCompoundInterest(double principal, double rate, int years,
-      double monthly, int monthchoosen) {
+      double monthly, int monthchoosen,int period) {
     // Calculate compound interest without regular deposits
     if (deposit == "None") {
-      double futureValue = principal * pow(1 + rate / 12, years * 12);
+      double futureValue = principal * pow(1 + rate / period, years * period);
       double r = rate / 100;
       // Calculate future value of regular deposits
-      for (int i = 0; i <= years; i++) {
+      for (int i = 1; i <= years; i++) {
         debugPrint('running $principal and $rate and ');
-        future.add((principal * pow(1 + r / 12, i * 12)));
+        future.add((principal * pow(1 + r / period, i * period)));
         //  futureValue += deposit * pow(1 + rate / 100, i);
       }
       int remainingMonths = 0;
       if (monthchoosen != '') {
-        remainingMonths = monthchoosen % 12;
+        remainingMonths = monthchoosen % period;
       }
       if (remainingMonths > 0) {
         double futureValueRemaining = principal *
-            pow(1 + r / 12, years * 12) *
-            pow(1 + r / 12, remainingMonths);
+            pow(1 + r / period, years * period) *
+            pow(1 + r / period, remainingMonths);
         debugPrint('running $futureValueRemaining and $rate and ');
         future.add(futureValueRemaining);
       }
@@ -54,22 +54,22 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
         List<double> yearEndValue = List.filled(11,
             0.0); // List to store year-end values (11 elements for 10 years)
         /// month <= years*12+monthchoosen
-        for (int month = 1; month <= years * 12; month++) {
+        for (int month = 1; month <= years * period; month++) {
           // Calculate interest earned on current balance
           firstFuture = futureValue;
           debugPrint("Now the interest is $firstFuture");
           //debugPrint("in end ist $futureValue");
-          futureValue += futureValue * r / 12;
+          futureValue += futureValue * r / period;
 
           // Add monthly investment
           futureValue += monthly;
 
           // Update year-end value (assuming year starts in January)
           /// commented   month == years*12+monthchoosen
-          if (month % 12 == 0) {
+          if (month % period == 0) {
             debugPrint(
                 "In end $futureValue and ${(firstFuture * r / 12) / 12} and $firstFuture aND $principal");
-            yearEndValue[month ~/ 12 - 1] = futureValue;
+            yearEndValue[month ~/ period - 1] = futureValue;
           }
         }
 
@@ -83,19 +83,21 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
 
         double r = rate / 100;
         // double fut = principal;
-        double monthlyInterestRate = r / 12; // Monthly interest rate
-        int totalMonths = years * 12; // Total number of months
+        double monthlyInterestRate = r / period; // Monthly interest rate
+        int totalMonths = years * period; // Total number of months
         double monthlyInvestment = monthly;
         double futureValue = principal;
 
         for (int month = 1; month <= totalMonths; month++) {
           futureValue += monthlyInvestment;
           futureValue += futureValue * monthlyInterestRate;
-          if (month % 12 == 0) {
+          if (month % period == 0) {
             future.add(futureValue);
           }
         }
       }
+    }else if(deposit == "Withdrawal"){
+      debugPrint("anand $monthly");
     }
     setState(() {});
     // return futureValue;
@@ -242,7 +244,14 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                                     vertical: 5.0, horizontal: 12.0),
                               ),
                               keyboardType: TextInputType.number,
-                              onChanged: (value) => year = int.parse(value),
+                              onChanged: (value) {
+                                if (value.isNotEmpty) {
+                                  year = int.parse(value);
+                                 // month = int.parse(value);
+                                } else {
+                                  year = 0; // or any default value you want
+                                }
+                              },
                             ),
                           ],
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,10 +492,24 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             onPressed: () {
+                              int pr=0;
                               debugPrint("ruu");
                               future.clear();
+                              if(period=="Daily"){
+                                pr=365;
+                              }else if(period=="Monthly"){
+                                pr=1;
+                              }else if(period=="Weekly"){
+                                pr=52;
+                              }
+                              else if(period=="Yearly"){
+                                pr=12;
+                              }
+                              else{
+                                pr=4;
+                              }
                               calculateCompoundInterest(startingBalance,
-                                  growthRate, year, monthlyDeposit, month);
+                                  growthRate, year, monthlyDeposit, month,pr);
                             },
                             color: Colors.green,
                             child: Text(
@@ -511,7 +534,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                               double interestEarned =
                                   future[index] - startingBalance;
                               return DataRow(cells: [
-                                DataCell(Text("${index}")),
+                                DataCell(Text("${index+1}")),
                                 DataCell(Text(
                                     "${interestEarned.toStringAsFixed(2)}")),
                                 DataCell(Text(
