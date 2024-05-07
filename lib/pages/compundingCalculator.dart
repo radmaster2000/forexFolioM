@@ -41,9 +41,9 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
           for (int j = 1; j <= period; j++) {
             compoundVal = compoundVal * pow(1 + r / period, period * t);
           }
-          // if (i % 52 == 0) {
-          future.add(compoundVal);
-          // }
+          if (i % 52 == 0) {
+            future.add(compoundVal);
+          }
         }
       } else if (pt == "Quarterly") {
         for (int i = 1; i <= years * period; i++) {
