@@ -25,38 +25,54 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
     // Calculate compound interest without regular deposits
     if (deposit == "None") {
       double compoundVal = principal;
+      double futureValue = principal * pow(1 + rate / period, years * period);
       double r = rate / 100;
-      double base = 1 + r / period;
       double t = 1 / period;
-
-      int interval;
+      // Calculate future value of regular deposits
       if (pt == "Monthly") {
-        interval = 12;
+        for (int i = 1; i <= years * 12; i++) {
+          compoundVal = compoundVal * pow(1 + r / period, period * t);
+          if (i % 12 == 0) {
+            future.add(compoundVal);
+          }
+        }
       } else if (pt == "Weekly") {
-        interval = 52;
+        for (int i = 1; i <= years * period; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+          }
+          // if (i % 52 == 0) {
+          future.add(compoundVal);
+          // }
+        }
       } else if (pt == "Quarterly") {
-        interval = 4;
+        for (int i = 1; i <= years * period; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+          }
+          if (i % 4 == 0) {
+            future.add(compoundVal);
+          }
+        }
       } else {
-        interval = 1;
+        for (int i = 1; i <= years; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+            future.add(compoundVal);
+          }
+        }
       }
 
-      int totalIterations = years * interval;
-      int remainingMonths = monthchoosen % 12;
-      bool hasRemainingMonths = remainingMonths > 0;
-
-      for (int i = 1; i <= totalIterations; i++) {
-        compoundVal *= pow(base, period * t);
-        if (i % interval == 0) {
-          future.add(compoundVal);
-        }
-        if (hasRemainingMonths &&
-            i == totalIterations &&
-            remainingMonths != interval) {
-          double futureValueRemaining = principal *
-              pow(base, years * period) *
-              pow(base, remainingMonths);
-          future.add(futureValueRemaining);
-        }
+      int remainingMonths = 0;
+      if (monthchoosen != '') {
+        remainingMonths = monthchoosen % 12;
+      }
+      if (remainingMonths > 0) {
+        double futureValueRemaining = principal *
+            pow(1 + r / period, years * period) *
+            pow(1 + r / period, remainingMonths);
+        debugPrint('running $futureValueRemaining and $rate and ');
+        future.add(futureValueRemaining);
       }
     } else if (deposit == "Deposit") {
       if (end == "End") {
