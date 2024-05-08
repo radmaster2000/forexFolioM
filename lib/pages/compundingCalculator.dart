@@ -21,20 +21,51 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
   List interest = [];
   List accruedInterest = [];
   calculateCompoundInterest(double principal, double rate, int years,
-      double monthly, int monthchoosen,int period) {
+      double monthly, int monthchoosen, int period, String pt) {
     // Calculate compound interest without regular deposits
     if (deposit == "None") {
+      double compoundVal = principal;
       double futureValue = principal * pow(1 + rate / period, years * period);
       double r = rate / 100;
+      double t = 1 / period;
       // Calculate future value of regular deposits
-      for (int i = 1; i <= years; i++) {
-        debugPrint('running $principal and $rate and ');
-        future.add((principal * pow(1 + r / period, i * period)));
-        //  futureValue += deposit * pow(1 + rate / 100, i);
+      if (pt == "Monthly") {
+        for (int i = 1; i <= years * 12; i++) {
+          compoundVal = compoundVal * pow(1 + r / period, period * t);
+          if (i % 12 == 0) {
+            future.add(compoundVal);
+          }
+        }
+      } else if (pt == "Weekly") {
+        for (int i = 1; i <= years * period; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+          }
+          if (i % 52 == 0) {
+            future.add(compoundVal);
+          }
+        }
+      } else if (pt == "Quarterly") {
+        for (int i = 1; i <= years * period; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+          }
+          if (i % 4 == 0) {
+            future.add(compoundVal);
+          }
+        }
+      } else {
+        for (int i = 1; i <= years; i++) {
+          for (int j = 1; j <= period; j++) {
+            compoundVal = compoundVal * pow(1 + r / period, period * t);
+            future.add(compoundVal);
+          }
+        }
       }
+
       int remainingMonths = 0;
       if (monthchoosen != '') {
-        remainingMonths = monthchoosen % period;
+        remainingMonths = monthchoosen % 12;
       }
       if (remainingMonths > 0) {
         double futureValueRemaining = principal *
@@ -96,7 +127,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
           }
         }
       }
-    }else if(deposit == "Withdrawal"){
+    } else if (deposit == "Withdrawal") {
       debugPrint("anand $monthly");
     }
     setState(() {});
@@ -247,7 +278,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                               onChanged: (value) {
                                 if (value.isNotEmpty) {
                                   year = int.parse(value);
-                                 // month = int.parse(value);
+                                  // month = int.parse(value);
                                 } else {
                                   year = 0; // or any default value you want
                                 }
@@ -492,24 +523,27 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(10)),
                             onPressed: () {
-                              int pr=0;
+                              int pr = 0;
                               debugPrint("ruu");
                               future.clear();
-                              if(period=="Daily"){
-                                pr=365;
-                              }else if(period=="Monthly"){
-                                pr=1;
-                              }else if(period=="Weekly"){
-                                pr=52;
+                              if (period == "Daily") {
+                                pr = 365;
+                              } else if (period == "Monthly" ||
+                                  period == "Yearly") {
+                                pr = 1;
+                              } else if (period == "Weekly") {
+                                pr = 52;
+                              } else {
+                                pr = 4;
                               }
-                              else if(period=="Yearly"){
-                                pr=12;
-                              }
-                              else{
-                                pr=4;
-                              }
-                              calculateCompoundInterest(startingBalance,
-                                  growthRate, year, monthlyDeposit, month,pr);
+                              calculateCompoundInterest(
+                                  startingBalance,
+                                  growthRate,
+                                  year,
+                                  monthlyDeposit,
+                                  month,
+                                  pr,
+                                  period);
                             },
                             color: Colors.green,
                             child: Text(
@@ -534,7 +568,7 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                               double interestEarned =
                                   future[index] - startingBalance;
                               return DataRow(cells: [
-                                DataCell(Text("${index+1}")),
+                                DataCell(Text("${index + 1}")),
                                 DataCell(Text(
                                     "${interestEarned.toStringAsFixed(2)}")),
                                 DataCell(Text(
