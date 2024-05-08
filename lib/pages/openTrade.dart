@@ -507,7 +507,17 @@ class _OpenTradeState extends State<OpenTrade> {
                 children: [
                   TextButton(onPressed: () {
 
-                    editTrade();
+                    editTrade(
+                      data[index].opendate,
+                      data[index].closedate,
+                      data[index].entryLevel,
+                      data[index].takeProfit,
+                      data[index].lotSize,
+                      data[index].stoploss,
+                      data[index].takeProfit,
+                      data[index].PL,
+                      data[index].setup,
+                    );
                   }, child: Text('Edit')),
                   if (data[index].open != "Close")
                     TextButton(
@@ -797,7 +807,7 @@ class _OpenTradeState extends State<OpenTrade> {
 
   }
 
-  editTrade(){
+  editTrade(String openDate,String closeDate,String entry,String close,String lot,String SL,String Tp,String net,String fee){
     DateTime _select=DateTime.now();
     TextEditingController opendate=TextEditingController();
     TextEditingController closedate=TextEditingController();
@@ -809,6 +819,14 @@ class _OpenTradeState extends State<OpenTrade> {
     TextEditingController PL=TextEditingController();
     TextEditingController fees=TextEditingController();
     TextEditingController notes=TextEditingController();
+    opendate.text=openDate;
+    closedate.text=closeDate;
+    entrylevel.text=entry;
+    lotSize.text=lot;
+    SL.text=stopLoss;
+    TP.text=Tp;
+    PL.text=net;
+    fees.text=fee;
     showDialog(context: context, builder: (context) => StatefulBuilder(builder: (context, setState) {
       return AlertDialog(
         insetPadding: EdgeInsets.all(10),
@@ -843,7 +861,10 @@ class _OpenTradeState extends State<OpenTrade> {
               ),
               Row(
                 children: [
-                  Text("Open"),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Open"),
+                  ),
                   Expanded(
                     child: TextField(
                       controller: opendate,
@@ -871,110 +892,39 @@ class _OpenTradeState extends State<OpenTrade> {
                   }, icon:  Icon(Icons.calendar_today)),
                 ],
               ),
-              TextField(
-               // controller: date,
-                decoration: InputDecoration(
-                  hintStyle: TextStyle(fontWeight: FontWeight.normal),
-                  // border: OutlineInputBorder(),
-                  hintText: 'Select Date',
-                ),
+              Row(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("Close"),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: closedate,
+                      decoration: InputDecoration(
+                        hintStyle: TextStyle(fontWeight: FontWeight.normal),
+                        // border: OutlineInputBorder(),
+                        hintText: '',
+                      ),
+                    ),
+                  ),
+                  IconButton(onPressed: ()async{
+                    final pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: _select,
+                      firstDate: DateTime(2000, 1), // Optional: Set minimum date
+                      lastDate: DateTime.now(), // Optional: Set maximum date
+                    );
+                    if (pickedDate != null && pickedDate != _select) {
+                      setState(() {
+                        _select = pickedDate;
+                        //date.text=DateFormat('dd-MM-yyyy').format(_select).toString();
+                        setState((){});
+                      });
+                    }
+                  }, icon:  Icon(Icons.calendar_today)),
+                ],
               ),
-              // Padding(
-              //   padding: const EdgeInsets.all(8.0),
-              //   child: Row(
-              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //     children: [
-              //       InkWell(
-              //         onTap: (){
-              //           stopLoss="TP";
-              //           close.text=tp;
-              //           PL.text=value;
-              //           setState((){});
-              //         },
-              //         child: Container(
-              //           //height: 50.0,
-              //           //width: MediaQuery.of(context).size.width/3,
-              //           child: new Center(
-              //             child: new Text('TP',
-              //                 style: new TextStyle(
-              //                     color:
-              //                     (stopLoss=="TP")?Colors.white:Colors.black,
-              //                     //fontWeight: FontWeight.bold,
-              //                     fontSize: 18.0)),
-              //           ),
-              //           decoration: new BoxDecoration(
-              //             color:(stopLoss=="TP")?Colors.blue:Colors.transparent,
-              //             border: new Border.all(
-              //                 width: 1.0,
-              //                 color:true
-              //                     ? Colors.blueAccent
-              //                     : Colors.grey),
-              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
-              //           ),
-              //         ),
-              //       ),
-              //       InkWell(
-              //         onTap: (){
-              //           stopLoss="SL";
-              //           close.text=sl;
-              //           PL.text="-$value";
-              //           setState((){});
-              //         },
-              //         child: Container(
-              //           //height: 50.0,
-              //           // width: MediaQuery.of(context).size.width/3,
-              //           child: new Center(
-              //             child: new Text('SL',
-              //                 style: new TextStyle(
-              //                     color:
-              //                     (stopLoss=="SL")?Colors.white:Colors.black,
-              //                     //fontWeight: FontWeight.bold,
-              //                     fontSize: 18.0)),
-              //           ),
-              //           decoration: new BoxDecoration(
-              //             color:(stopLoss=="SL")?Colors.blue:Colors.transparent,
-              //             border: new Border.all(
-              //                 width: 1.0,
-              //                 color:true
-              //                     ? Colors.blueAccent
-              //                     : Colors.grey),
-              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
-              //           ),
-              //         ),
-              //       ),
-              //
-              //       InkWell(
-              //         onTap: (){
-              //           stopLoss="manual";
-              //           close.text="";
-              //           PL.text="";
-              //           setState((){});
-              //         },
-              //         child: Container(
-              //           //height: 50.0,
-              //           // width: MediaQuery.of(context).size.width/3,
-              //           child: new Center(
-              //             child: new Text('manual',
-              //                 style: new TextStyle(
-              //                     color:
-              //                     (stopLoss=="manual")?Colors.white:Colors.black,
-              //                     //fontWeight: FontWeight.bold,
-              //                     fontSize: 18.0)),
-              //           ),
-              //           decoration: new BoxDecoration(
-              //             color:(stopLoss=="manual")?Colors.blue:Colors.transparent,
-              //             border: new Border.all(
-              //                 width: 1.0,
-              //                 color:true
-              //                     ? Colors.blueAccent
-              //                     : Colors.grey),
-              //             borderRadius: const BorderRadius.all(const Radius.circular(2.0)),
-              //           ),
-              //         ),
-              //       ),
-              //     ],
-              //   ),
-              // ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
@@ -983,9 +933,9 @@ class _OpenTradeState extends State<OpenTrade> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text("Close Price"),
+                          Text("Entry level"),
                           TextField(
-                            controller: close,
+                            controller: entrylevel,
                             onChanged: (String? value)async{
                             //  PL.text=await calculatePandL(lot, entry, value!, value!);
                               setState((){});
@@ -999,7 +949,41 @@ class _OpenTradeState extends State<OpenTrade> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text("Lot Size"),
+                          Text("Close Price"),
+                          TextField(
+                            controller: close,
+                          )
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Close method"),
+                          TextField(
+                            controller: close,
+                            onChanged: (String? value)async{
+                             // PL.text=await calculatePandL(lot, entry, value!, value!);
+                              setState((){});
+                            },
+
+                          )
+                        ],
+                      ),
+                    ),
+                    Spacer(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Text("Position Size"),
                           TextField(
                             controller: lotSize,
                           )
@@ -1017,9 +1001,9 @@ class _OpenTradeState extends State<OpenTrade> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text("Close Price"),
+                          Text("Stoploss"),
                           TextField(
-                            controller: close,
+                            controller: SL,
                             onChanged: (String? value)async{
                              // PL.text=await calculatePandL(lot, entry, value!, value!);
                               setState((){});
@@ -1033,43 +1017,9 @@ class _OpenTradeState extends State<OpenTrade> {
                     Expanded(
                       child: Column(
                         children: [
-                          Text("Lot Size"),
+                          Text("Take Profit"),
                           TextField(
-                            controller: lotSize,
-                          )
-                        ],
-                      ),
-                    )
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text("Close Price"),
-                          TextField(
-                            controller: close,
-                            onChanged: (String? value)async{
-                             // PL.text=await calculatePandL(lot, entry, value!, value!);
-                              setState((){});
-                            },
-
-                          )
-                        ],
-                      ),
-                    ),
-                    Spacer(),
-                    Expanded(
-                      child: Column(
-                        children: [
-                          Text("Lot Size"),
-                          TextField(
-                            controller: lotSize,
+                            controller: TP,
                           )
                         ],
                       ),

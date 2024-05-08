@@ -95,7 +95,7 @@ class DatabaseHelper {
       join(await getDatabasesPath(), 'journal_database.db'),
       onCreate: (db, version) async{
         await db.execute(
-          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, opendate TEXT, closedate TEXT,setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT,PL TEXT)",
+          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, opendate TEXT, closedate TEXT,setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT,PL TEXT,)",
         );
         await db.execute(
             "CREATE TABLE Trade (startDate TEXT, endDate TEXT)"

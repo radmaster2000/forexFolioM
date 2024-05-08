@@ -352,25 +352,25 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
                               ? Colors.black
                               : Colors.white),
                         )),
-                    InkWell(
-                        onTap: () {
-                          setState(() {
-                            deposit = "Withdrawal";
-                          });
-                        },
-                        child: Chip(
-                          label: Text(
-                            "Withdrawal",
-                            style: TextStyle(
-                                color: (deposit == "Withdrawal")
-                                    ? Colors.white
-                                    : Colors.black),
-                          ),
-                          color: MaterialStatePropertyAll(
-                              (deposit == "Withdrawal")
-                                  ? Colors.black
-                                  : Colors.white),
-                        )),
+                    // InkWell(
+                    //     onTap: () {
+                    //       setState(() {
+                    //         deposit = "Withdrawal";
+                    //       });
+                    //     },
+                    //     child: Chip(
+                    //       label: Text(
+                    //         "Withdrawal",
+                    //         style: TextStyle(
+                    //             color: (deposit == "Withdrawal")
+                    //                 ? Colors.white
+                    //                 : Colors.black),
+                    //       ),
+                    //       color: MaterialStatePropertyAll(
+                    //           (deposit == "Withdrawal")
+                    //               ? Colors.black
+                    //               : Colors.white),
+                    //     )),
                   ],
                 ),
 
