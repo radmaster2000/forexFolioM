@@ -36,7 +36,7 @@ class JournalData {
     required this.hitby,
     required this.notes,
     required this.longShort,
-  required this.PL
+    required this.PL
   });
 
   Map<String, dynamic> toMap() {
@@ -95,7 +95,7 @@ class DatabaseHelper {
       join(await getDatabasesPath(), 'journal_database.db'),
       onCreate: (db, version) async{
         await db.execute(
-          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, opendate TEXT, closedate TEXT,setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT,PL TEXT,)",
+          "CREATE TABLE JournalData(id INTEGER PRIMARY KEY, symbol TEXT, opendate TEXT, closedate TEXT,setup TEXT, entryLevel TEXT, lotSize TEXT, stoploss TEXT, takeProfit TEXT,images TEXT,open TEXT,hitby TEXT,notes TEXT,longShort TEXT,PL TEXT)",
         );
         await db.execute(
             "CREATE TABLE Trade (startDate TEXT, endDate TEXT)"
@@ -321,7 +321,7 @@ class Trade {
 
   factory Trade.fromMap(Map<String, dynamic> map) {
     return Trade(
-        startDate:DateTime.parse(map['startDate']),
+      startDate:DateTime.parse(map['startDate']),
       endDate:DateTime.parse(map['endDate']),
     );
   }

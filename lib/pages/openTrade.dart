@@ -30,35 +30,35 @@ class _OpenTradeState extends State<OpenTrade> {
   getdatabaseData() async {
     var data = await database.getJournalData();
 
-  debugPrint("the database data is ${data[0].takeProfit},${data[0].opendate},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
-  if(data!=null){
-    db=data;
-    for(int i=0;i<db.length;i++){
-      List<String> parts = db[i].opendate.split("-"); // Split the date string by '-'
-      String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
-      debugPrint("date is ${db[i].opendate}");
-      DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(formattedDate)));
-      DateTime monday = date.subtract(Duration(days: date.weekday - 1));
-      DateTime friday = monday.add(Duration(days: 4));
-      ///========================///
-      List<String> dayParts = widget.startday!.split("-");
-      String formattedDay = "${dayParts[2]}-${dayParts[1]}-${dayParts[0]}";
-      DateTime dayDateTime = DateTime.parse(formattedDay);
-      ///==============================///
-      List<String> endParts = widget.endDay!.split("-");
-      String form = "${endParts[2]}-${endParts[1]}-${endParts[0]}";
-      DateTime endDayTime = DateTime.parse(form);
-      debugPrint("In open trade $date and $monday and $friday");
-      if (dayDateTime == monday && endDayTime==friday) {
-       filteredList.add(db[i]);
-      } else {
-        print("The day is not equal to Friday");
+    debugPrint("the database data is ${data[0].takeProfit},${data[0].opendate},${data[0].lotSize},${data[0].stoploss},${data[0].hitby},${data[0].open},${data[0].notes}");
+    if(data!=null){
+      db=data;
+      for(int i=0;i<db.length;i++){
+        List<String> parts = db[i].opendate.split("-"); // Split the date string by '-'
+        String formattedDate = "${parts[2]}-${parts[1]}-${parts[0]}";
+        debugPrint("date is ${db[i].opendate}");
+        DateTime date=   DateTime.parse(DateFormat('yyyy-MM-dd').format(DateTime.parse(formattedDate)));
+        DateTime monday = date.subtract(Duration(days: date.weekday - 1));
+        DateTime friday = monday.add(Duration(days: 4));
+        ///========================///
+        List<String> dayParts = widget.startday!.split("-");
+        String formattedDay = "${dayParts[2]}-${dayParts[1]}-${dayParts[0]}";
+        DateTime dayDateTime = DateTime.parse(formattedDay);
+        ///==============================///
+        List<String> endParts = widget.endDay!.split("-");
+        String form = "${endParts[2]}-${endParts[1]}-${endParts[0]}";
+        DateTime endDayTime = DateTime.parse(form);
+        debugPrint("In open trade $date and $monday and $friday");
+        if (dayDateTime == monday && endDayTime==friday) {
+          filteredList.add(db[i]);
+        } else {
+          print("The day is not equal to Friday");
+        }
       }
-    }
-    setState(() {
+      setState(() {
 
-    });
-  }
+      });
+    }
 
   }
 
@@ -129,96 +129,96 @@ class _OpenTradeState extends State<OpenTrade> {
               },
             ),
           )
-          // body: Container(
-          //   height: getHeight(context,1),
-          //   decoration: BoxDecoration(
-          //     gradient: LinearGradient(
-          //       begin: Alignment.topLeft,
-          //       end: Alignment.bottomRight,
-          //       colors: [ Color(0xFF9B75DA),
-          //         Color(0xFF9B75DA),
-          //         Colors.white],
-          //     ),
-          //   ),
-          //   child: Column(
-          //     children: [
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Row(
-          //           children: [
-          //             Expanded(child: customRadio(context,'Stop')),
-          //             Expanded(child: customRadio(context,'Loss'))
-          //           ],
-          //         ),
-          //       ),
-          //       Padding(
-          //         padding: const EdgeInsets.all(8.0),
-          //         child: Row(
-          //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //           children: [
-          //             Card(
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(8.0),
-          //                     child: Text("EURUSD",style: Theme.of(context).textTheme.headlineSmall,),
-          //                   ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(8.0),
-          //                     child: Text("15%",style: Theme.of(context).textTheme.headlineMedium),
-          //                   ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(5.0),
-          //                     child: Row(
-          //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                       children: [
-          //                         Text("Mar 4"),
-          //                         Text('-'),
-          //                         Text('10 Mar'),
-          //                         Text(',2024'),
-          //                         Icon(Icons.do_not_disturb_on_total_silence,color: Colors.green,size: 10,)
-          //                       ],
-          //                     ),
-          //                   )
-          //                 ],
-          //               ),
-          //             ),
-          //             Card(
-          //               child: Column(
-          //                 mainAxisAlignment: MainAxisAlignment.start,
-          //                 children: [
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(8.0),
-          //                     child: Text("Return",style: Theme.of(context).textTheme.headlineSmall,),
-          //                   ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(8.0),
-          //                     child: Text("15%",style: Theme.of(context).textTheme.headlineMedium),
-          //                   ),
-          //                   Padding(
-          //                     padding: const EdgeInsets.all(5.0),
-          //                     child: Row(
-          //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //                       children: [
-          //                         Text("Mar 4"),
-          //                         Text('-'),
-          //                         Text('10 Mar'),
-          //                         Text(',2024'),
-          //                         Icon(Icons.do_not_disturb_on_total_silence,color: Colors.green,size: 10,)
-          //                       ],
-          //                     ),
-          //                   )
-          //                 ],
-          //               ),
-          //             ),
-          //           ],
-          //         ),
-          //       )
-          //     ],
-          //   ),
-          // ),
-          ),
+        // body: Container(
+        //   height: getHeight(context,1),
+        //   decoration: BoxDecoration(
+        //     gradient: LinearGradient(
+        //       begin: Alignment.topLeft,
+        //       end: Alignment.bottomRight,
+        //       colors: [ Color(0xFF9B75DA),
+        //         Color(0xFF9B75DA),
+        //         Colors.white],
+        //     ),
+        //   ),
+        //   child: Column(
+        //     children: [
+        //       Padding(
+        //         padding: const EdgeInsets.all(8.0),
+        //         child: Row(
+        //           children: [
+        //             Expanded(child: customRadio(context,'Stop')),
+        //             Expanded(child: customRadio(context,'Loss'))
+        //           ],
+        //         ),
+        //       ),
+        //       Padding(
+        //         padding: const EdgeInsets.all(8.0),
+        //         child: Row(
+        //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //           children: [
+        //             Card(
+        //               child: Column(
+        //                 mainAxisAlignment: MainAxisAlignment.start,
+        //                 children: [
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(8.0),
+        //                     child: Text("EURUSD",style: Theme.of(context).textTheme.headlineSmall,),
+        //                   ),
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(8.0),
+        //                     child: Text("15%",style: Theme.of(context).textTheme.headlineMedium),
+        //                   ),
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(5.0),
+        //                     child: Row(
+        //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                       children: [
+        //                         Text("Mar 4"),
+        //                         Text('-'),
+        //                         Text('10 Mar'),
+        //                         Text(',2024'),
+        //                         Icon(Icons.do_not_disturb_on_total_silence,color: Colors.green,size: 10,)
+        //                       ],
+        //                     ),
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //             Card(
+        //               child: Column(
+        //                 mainAxisAlignment: MainAxisAlignment.start,
+        //                 children: [
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(8.0),
+        //                     child: Text("Return",style: Theme.of(context).textTheme.headlineSmall,),
+        //                   ),
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(8.0),
+        //                     child: Text("15%",style: Theme.of(context).textTheme.headlineMedium),
+        //                   ),
+        //                   Padding(
+        //                     padding: const EdgeInsets.all(5.0),
+        //                     child: Row(
+        //                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                       children: [
+        //                         Text("Mar 4"),
+        //                         Text('-'),
+        //                         Text('10 Mar'),
+        //                         Text(',2024'),
+        //                         Icon(Icons.do_not_disturb_on_total_silence,color: Colors.green,size: 10,)
+        //                       ],
+        //                     ),
+        //                   )
+        //                 ],
+        //               ),
+        //             ),
+        //           ],
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        // ),
+      ),
     );
   }
 
@@ -227,7 +227,7 @@ class _OpenTradeState extends State<OpenTrade> {
     // await Permission.storage.request();
 
     final pickedFile =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
@@ -321,7 +321,7 @@ class _OpenTradeState extends State<OpenTrade> {
                     // ),
                     Expanded(
                       child: Container(
-                       // width: 100,
+                        // width: 100,
                         // decoration: BoxDecoration(
                         //     borderRadius: BorderRadius.circular(20),
                         //     border: Border.all(color: Colors.grey)
@@ -331,63 +331,63 @@ class _OpenTradeState extends State<OpenTrade> {
                           children: [
                             (data[index].open == "Close")
                                 ? Container(
-                                    child: Column(
-                                      children: [Text('Return'), Text('26%')],
-                                    ),
-                                  )
+                              child: Column(
+                                children: [Text('Return'), Text('26%')],
+                              ),
+                            )
                                 : Container(
-                                    padding: EdgeInsets.all(2),
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text('Status'),
-                                        Text('Active')
-                                      ],
-                                    ),
-                                  ),
+                              padding: EdgeInsets.all(2),
+                              child: Column(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  Text('Status'),
+                                  Text('Active')
+                                ],
+                              ),
+                            ),
                             Divider(
                               thickness: 2,
                             ),
                             (data[index].open == "Close")
                                 ? Container(
-                                    // decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(20),
-                                    //     border: Border.all(color: Colors.grey)
-                                    // ),
-                                    child: Column(
-                                      children: [
-                                        Text('Duration'),
-                                        Text('2:00 hrs%')
-                                      ],
-                                    ),
-                                  )
+                              // decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(20),
+                              //     border: Border.all(color: Colors.grey)
+                              // ),
+                              child: Column(
+                                children: [
+                                  Text('Duration'),
+                                  Text('2:00 hrs%')
+                                ],
+                              ),
+                            )
                                 : Container(
-                                    // decoration: BoxDecoration(
-                                    //     borderRadius: BorderRadius.circular(20),
-                                    //     border: Border.all(color: Colors.grey)
-                                    // ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        (data[index].longShort == "Long")
-                                            ? Icon(Icons.arrow_circle_up)
-                                            : Icon(Icons.arrow_circle_down),
-                                        (data[index].longShort == "Long")
-                                            ? Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text("Buy"),
-                                              )
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Text("Sell"),
-                                              )
-                                      ],
-                                    ),
+                              // decoration: BoxDecoration(
+                              //     borderRadius: BorderRadius.circular(20),
+                              //     border: Border.all(color: Colors.grey)
+                              // ),
+                              child: Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: [
+                                  (data[index].longShort == "Long")
+                                      ? Icon(Icons.arrow_circle_up)
+                                      : Icon(Icons.arrow_circle_down),
+                                  (data[index].longShort == "Long")
+                                      ? Padding(
+                                    padding:
+                                    const EdgeInsets.all(8.0),
+                                    child: Text("Buy"),
                                   )
+                                      : Padding(
+                                    padding:
+                                    const EdgeInsets.all(8.0),
+                                    child: Text("Sell"),
+                                  )
+                                ],
+                              ),
+                            )
                           ],
                         ),
                       ),
@@ -435,14 +435,14 @@ class _OpenTradeState extends State<OpenTrade> {
                   children: [
                     (data[index].open == "Close")
                         ? Column(
-                            children: [Text("P&L"), Text(data[index].PL)],
-                          )
+                      children: [Text("P&L"), Text(data[index].PL)],
+                    )
                         : Column(
-                            children: [
-                              Text("Entry"),
-                              Text(data[index].entryLevel)
-                            ],
-                          ),
+                      children: [
+                        Text("Entry"),
+                        Text(data[index].entryLevel)
+                      ],
+                    ),
                     Column(
                       children: [Text("Size"), Text(data[index].lotSize)],
                     ),
@@ -461,21 +461,21 @@ class _OpenTradeState extends State<OpenTrade> {
                 children: [
                   (data[index].images == null)
                       ? IconButton(
-                          onPressed: () {}, icon: Icon(Icons.camera_alt))
+                      onPressed: () {}, icon: Icon(Icons.camera_alt))
                       : Icon(Icons.add),
                   (isShow[index])
                       ? IconButton(
-                          onPressed: () {
-                            isShow[index] = !isShow[index];
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.expand_less))
+                      onPressed: () {
+                        isShow[index] = !isShow[index];
+                        setState(() {});
+                      },
+                      icon: Icon(Icons.expand_less))
                       : IconButton(
-                          onPressed: () {
-                            isShow[index] = !isShow[index];
-                            setState(() {});
-                          },
-                          icon: Icon(Icons.expand_more))
+                      onPressed: () {
+                        isShow[index] = !isShow[index];
+                        setState(() {});
+                      },
+                      icon: Icon(Icons.expand_more))
                 ],
               ),
               if (isShow[index]) Divider(),
@@ -937,7 +937,7 @@ class _OpenTradeState extends State<OpenTrade> {
                           TextField(
                             controller: entrylevel,
                             onChanged: (String? value)async{
-                            //  PL.text=await calculatePandL(lot, entry, value!, value!);
+                              //  PL.text=await calculatePandL(lot, entry, value!, value!);
                               setState((){});
                             },
 
@@ -971,7 +971,7 @@ class _OpenTradeState extends State<OpenTrade> {
                           TextField(
                             controller: close,
                             onChanged: (String? value)async{
-                             // PL.text=await calculatePandL(lot, entry, value!, value!);
+                              // PL.text=await calculatePandL(lot, entry, value!, value!);
                               setState((){});
                             },
 
@@ -1005,7 +1005,7 @@ class _OpenTradeState extends State<OpenTrade> {
                           TextField(
                             controller: SL,
                             onChanged: (String? value)async{
-                             // PL.text=await calculatePandL(lot, entry, value!, value!);
+                              // PL.text=await calculatePandL(lot, entry, value!, value!);
                               setState((){});
                             },
 
@@ -1133,10 +1133,10 @@ class _OpenTradeState extends State<OpenTrade> {
     //    risk*=curreRatio;
     // reward*=curreRatio;
     return risk.toStringAsFixed(2);
-   // rewardi=reward.toStringAsFixed(2);
-   //  setState(() {
-   //
-   //  });
+    // rewardi=reward.toStringAsFixed(2);
+    //  setState(() {
+    //
+    //  });
 
   }
 
