@@ -37,54 +37,34 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
           }
         }
       } else if (pt == "Weekly") {
-        for (int i = 1; i <= years * period; i++) {
-          for (int j = 1; j <= period; j++) {
-            compoundVal = compoundVal * pow(1 + r / period, period * t);
-          }
-          if (i % 52 == 0) {
-            future.add(compoundVal);
+        int totalMonths = 365;
+        for (int i = 1; i <= totalMonths; i++) {
+          if (i % 7 == 0) {
+            compoundVal += compoundVal * r;
           }
         }
-      }
-      // else if (pt == "Quarterly") {
-      //   for (int i = 1; i <= years * period; i++) {
-      //     for (int j = 1; j <= period; j++) {
-      //       compoundVal = compoundVal * pow(1 + r / period, period * t);
-      //       debugPrint("compoundval in quarterly for loop  $compoundVal and $period and $years");
-      //     }
-      //     if (i % 4 == 0) {
-      //       debugPrint("compoundval in quarterly $compoundVal");
-      //       future.add(compoundVal);
-      //     }
-      //   }
-      // }
-      else if (pt == "Quarterly") {
+        future.add(compoundVal);
+      } else if (pt == "Quarterly") {
         int totalMonths = years * 12; // Assuming year has 12 months
 
         for (int i = 1; i <= totalMonths; i++) {
-          if(i%3==0){
-            compoundVal+= compoundVal * r;
+          if (i % 3 == 0) {
+            compoundVal += compoundVal * r;
           }
           debugPrint("compoundval in quarterly for loop  $compoundVal");
-
-          // Check if month is divisible by 3 (considering 0-based indexing)
-          // if ((i) % 3 == 0) {
-          //   debugPrint("compoundval in quarterly $compoundVal");
-          //
-          // }
         }
         future.add(compoundVal);
-      }
-      else if (pt == "Daily") {
+      } else if (pt == "Daily") {
         int totalDays = years * 365; // Assuming 365 days in a year
         for (int i = 1; i <= totalDays; i++) {
-          double dailyInterest = (compoundVal * r / 365); // Calculate daily interest
+          double dailyInterest =
+              (compoundVal * r / 365); // Calculate daily interest
           compoundVal += dailyInterest; // Add daily interest to principal
           if (i % 365 == 0) {
             future.add(compoundVal);
           }
         }
-      }else {
+      } else {
         for (int i = 1; i <= years; i++) {
           for (int j = 1; j <= period; j++) {
             compoundVal = compoundVal * pow(1 + r / period, period * t);
@@ -103,10 +83,9 @@ class _CoumpoundingCalculatorState extends State<CoumpoundingCalculator> {
             pow(1 + r / period, remainingMonths);
         debugPrint('running $futureValueRemaining and $rate and ');
 
-        if (pt == "Quarterly"){
-          future.add(futureValueRemaining+compoundVal);
-        }
-        else{
+        if (pt == "Quarterly") {
+          future.add(futureValueRemaining + compoundVal);
+        } else {
           future.add(futureValueRemaining);
         }
       }
